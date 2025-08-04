@@ -1,90 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Digital Menu</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f8f8f8;
-      padding: 40px;
-      margin: 0;
-    }
-
-    .container {
-      max-width: 500px;
-      margin: auto;
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-
-    h1 {
-      text-align: center;
-      color: #222;
-    }
-
-    h3 {
-      text-align: center;
-      color: #666;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-    }
-
-    label {
-      margin-top: 15px;
-      font-weight: bold;
-    }
-
-    select, input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin-top: 5px;
-    }
-
-    button {
-      background: #4CAF50;
-      color: white;
-      border: none;
-      margin-top: 20px;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-
-    button:hover {
-      background: #45a049;
-    }
-
-    #status {
-      margin-top: 10px;
-      text-align: center;
-    }
+    body { font-family: sans-serif; background: #f9f9f9; padding: 40px; }
+    .container { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    label, select, input, button { display: block; width: 100%; margin-top: 15px; font-size: 16px; }
+    button { background: #4CAF50; color: white; border: none; padding: 10px; cursor: pointer; }
+    #status { margin-top: 20px; text-align: center; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🍽️ Welcome to Our Restaurant</h1>
-    <h3 id="tableInfo">Table: Unknown</h3>
+    <h2>🍽️ Order Menu</h2>
+    <h4 id="tableInfo">Table: Unknown</h4>
 
     <form id="orderForm">
-      <label for="item">Choose an item:</label>
+      <label for="item">Menu Item</label>
       <select id="item">
-        <option value="Coffee ☕">Coffee ☕</option>
-        <option value="Tea 🍵">Tea 🍵</option>
-        <option value="Burger 🍔">Burger 🍔</option>
-        <option value="Pizza 🍕">Pizza 🍕</option>
-        <option value="Juice 🧃">Juice 🧃</option>
+        <option value="Coffee ☕">Coffee</option>
+        <option value="Burger 🍔">Burger</option>
+        <option value="Pizza 🍕">Pizza</option>
       </select>
 
-      <label for="quantity">Quantity:</label>
-      <input type="number" id="quantity" value="1" min="1" />
+      <label for="quantity">Quantity</label>
+      <input type="number" id="quantity" min="1" value="1">
 
-      <button type="submit">📤 Send Order</button>
+      <button type="submit">Submit Order</button>
       <p id="status"></p>
     </form>
   </div>
@@ -93,33 +36,26 @@
     const table = new URLSearchParams(window.location.search).get("table") || "Unknown";
     document.getElementById("tableInfo").textContent = `Table: ${table}`;
 
-    document.getElementById("orderForm").addEventListener("submit", e => {
+    document.getElementById("orderForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      const item = document.getElementById("item").value;
-      const quantity = document.getElementById("quantity").value;
-      const message = `🧾 *New Order*\n🍽 Item: ${item}\n🔢 Quantity: ${quantity}\n🪑 Table: ${table}`;
-
-      const url = `https://tg.elshad.ai/send`; // hosted proxy
-      const payload = {
-        token: "8055549366:AAEPchOt5SN8xE7z-QSc2jgiOqfK-ZZkXoU",
-        chat_id: "-1002634247944",
-        message
+      const data = {
+        table: table,
+        item: document.getElementById("item").value,
+        quantity: document.getElementById("quantity").value
       };
 
-      fetch(url, {
+      fetch("https://script.google.com/macros/s/AKfycbz6wSYYtuChby66ATwHH21xuT2tVg4Pq_n-IcUyVcuVIVrA9YtYP0vWPeCZL4PqfkA9/exec", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("status").textContent =
-          data.ok ? "✅ Order sent!" : "❌ Telegram error.";
-      })
-      .catch(err => {
-        console.error("Telegram error:", err);
-        document.getElementById("status").textContent = "❌ Network error.";
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      }).then(() => {
+        document.getElementById("status").textContent = "✅ Order sent!";
+      }).catch(() => {
+        document.getElementById("status").textContent = "❌ Failed to send.";
       });
     });
   </script>
