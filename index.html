@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Digital Menu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🍽️ Welcome to Our Restaurant</h1>
+    <h3 id="tableInfo">Table: Unknown</h3>
+
+    <form id="orderForm">
+      <label for="item">Choose an item:</label>
+      <select id="item">
+        <option value="Coffee ☕">Coffee ☕</option>
+        <option value="Tea 🍵">Tea 🍵</option>
+        <option value="Burger 🍔">Burger 🍔</option>
+        <option value="Pizza 🍕">Pizza 🍕</option>
+        <option value="Juice 🧃">Juice 🧃</option>
+      </select>
+
+      <label for="quantity">Quantity:</label>
+      <input type="number" id="quantity" value="1" min="1" />
+
+      <button type="submit">📤 Send Order</button>
+      <p id="status"></p>
+    </form>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const tableNumber = params.get('table') || 'Unknown';
+    document.getElementById("tableInfo").textContent = `Table: ${tableNumber}`;
+
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const item = document.getElementById('item').value;
+      const quantity = document.getElementById('quantity').value;
+      const message = `🧾 *New Order*\n🍽 Item: ${item}\n🔢 Quantity: ${quantity}\n🪑 Table: ${tableNumber}`;
+
+      fetch(`https://api.telegram.org/bot<8055549366:AAEPchOt5SN8xE7z-QSc2jgiOqfK-ZZkXoU>/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: "<-1002634247944>",
+          text: message,
+          parse_mode: "Markdown"
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('status').textContent = "✅ Order sent successfully!";
+      })
+      .catch(err => {
+        document.getElementById('status').textContent = "❌ Failed to send order.";
+      });
+    });
+  </script>
+</body>
+</html>
