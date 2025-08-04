@@ -30,34 +30,27 @@
   </div>
 
   <script>
-    const tableNumber = new URLSearchParams(window.location.search).get("table") || "Unknown";
-    document.getElementById("tableInfo").textContent = `Table: ${tableNumber}`;
+const table = new URLSearchParams(window.location.search).get("table") || "Unknown";
+document.getElementById("tableInfo").textContent = `Table: ${table}`;
 
-    document.getElementById("orderForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+document.getElementById("orderForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const item = document.getElementById("item").value;
+  const qty = document.getElementById("quantity").value;
+  const msg = `🧾 *New Order*\n🍽 Item: ${item}\n🔢 Quantity: ${qty}\n🪑 Table: ${table}`;
 
-      const item = document.getElementById("item").value;
-      const quantity = document.getElementById("quantity").value;
-      const message = `🧾 *New Order*\n🍽 Item: ${item}\n🔢 Quantity: ${quantity}\n🪑 Table: ${tableNumber}`;
-
-      fetch("https://telegram-order-proxy.vercel.app/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token: "8055549366:AAEPchOt5SN8xE7z-QSc2jgiOqfK-ZZkXoU",
-          chat_id: "-1002634247944", // <- added minus!
-          message: message
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("status").textContent = "✅ Order sent!";
-      })
-      .catch(err => {
-        console.error("Telegram API error:", err);
-        document.getElementById("status").textContent = "❌ Failed to send order.";
-      });
+  const url = `https://telegram-api-proxy-anonymous.pages.dev/api/bot8055549366:AAEPchOt5SN8xE7z-QSc2jgiOqfK-ZZkXoU/sendMessage`;
+  const params = new URLSearchParams({ chat_id: "-1002634247944", text: msg });
+  fetch(`${url}?${params.toString()}`, { method: 'GET' })
+    .then(r => r.json())
+    .then(ok => {
+      document.getElementById('status').textContent = ok.ok ? "✅ Order sent!" : "❌ Telegram failed.";
+    })
+    .catch(err => {
+      console.error("API proxy error:", err);
+      document.getElementById('status').textContent = "❌ Network or proxy error.";
     });
-  </script>
+});
+</script>
 </body>
 </html>
