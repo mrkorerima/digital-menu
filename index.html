@@ -8,7 +8,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>🍽️ Welcome to Our Restaurant</h1>
+    <h1>🍽️ Welcome to Asgorrii Buna</h1>
     <h3 id="tableInfo">Table: Unknown</h3>
 
     <form id="orderForm">
@@ -55,6 +55,7 @@
         document.getElementById('status').textContent = "✅ Order sent successfully!";
       })
       .catch(err => {
+        console.error("Telegram API error:", err);
         document.getElementById('status').textContent = "❌ Failed to send order.";
       });
     });
