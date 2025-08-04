@@ -8,7 +8,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>🍽️ Welcome to Asgorrii Buna</h1>
+    <h1>🍽️ Welcome to Our Restaurant</h1>
     <h3 id="tableInfo">Table: Unknown</h3>
 
     <form id="orderForm">
@@ -30,33 +30,32 @@
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const tableNumber = params.get('table') || 'Unknown';
+    const tableNumber = new URLSearchParams(window.location.search).get("table") || "Unknown";
     document.getElementById("tableInfo").textContent = `Table: ${tableNumber}`;
 
-    document.getElementById('orderForm').addEventListener('submit', function(e) {
+    document.getElementById("orderForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      const item = document.getElementById('item').value;
-      const quantity = document.getElementById('quantity').value;
+      const item = document.getElementById("item").value;
+      const quantity = document.getElementById("quantity").value;
       const message = `🧾 *New Order*\n🍽 Item: ${item}\n🔢 Quantity: ${quantity}\n🪑 Table: ${tableNumber}`;
 
-      fetch(`https://api.telegram.org/bot<8055549366:AAEPchOt5SN8xE7z-QSc2jgiOqfK-ZZkXoU>/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      fetch("https://telegram-order-proxy.vercel.app/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          chat_id: "<1002634247944>",
-          text: message,
-          parse_mode: "Markdown"
+          token: "8055549366:AAEPchOt5SN8xE7z-QSc2jgiOqfK-ZZkXoU",
+          chat_id: "-1002634247944", // <- added minus!
+          message: message
         })
       })
       .then(res => res.json())
       .then(data => {
-        document.getElementById('status').textContent = "✅ Order sent successfully!";
+        document.getElementById("status").textContent = "✅ Order sent!";
       })
       .catch(err => {
         console.error("Telegram API error:", err);
-        document.getElementById('status').textContent = "❌ Failed to send order.";
+        document.getElementById("status").textContent = "❌ Failed to send order.";
       });
     });
   </script>
