@@ -4,7 +4,67 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Digital Menu</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8f8f8;
+      padding: 40px;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #222;
+    }
+
+    h3 {
+      text-align: center;
+      color: #666;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    select, input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 5px;
+    }
+
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      margin-top: 20px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background: #45a049;
+    }
+
+    #status {
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -30,27 +90,38 @@
   </div>
 
   <script>
-const table = new URLSearchParams(window.location.search).get("table") || "Unknown";
-document.getElementById("tableInfo").textContent = `Table: ${table}`;
+    const table = new URLSearchParams(window.location.search).get("table") || "Unknown";
+    document.getElementById("tableInfo").textContent = `Table: ${table}`;
 
-document.getElementById("orderForm").addEventListener("submit", e => {
-  e.preventDefault();
-  const item = document.getElementById("item").value;
-  const qty = document.getElementById("quantity").value;
-  const msg = `🧾 *New Order*\n🍽 Item: ${item}\n🔢 Quantity: ${qty}\n🪑 Table: ${table}`;
+    document.getElementById("orderForm").addEventListener("submit", e => {
+      e.preventDefault();
 
-  const url = `https://telegram-api-proxy-anonymous.pages.dev/api/bot8055549366:AAEPchOt5SN8xE7z-QSc2jgiOqfK-ZZkXoU/sendMessage`;
-  const params = new URLSearchParams({ chat_id: "-1002634247944", text: msg });
-  fetch(`${url}?${params.toString()}`, { method: 'GET' })
-    .then(r => r.json())
-    .then(ok => {
-      document.getElementById('status').textContent = ok.ok ? "✅ Order sent!" : "❌ Telegram failed.";
-    })
-    .catch(err => {
-      console.error("API proxy error:", err);
-      document.getElementById('status').textContent = "❌ Network or proxy error.";
+      const item = document.getElementById("item").value;
+      const quantity = document.getElementById("quantity").value;
+      const message = `🧾 *New Order*\n🍽 Item: ${item}\n🔢 Quantity: ${quantity}\n🪑 Table: ${table}`;
+
+      const url = `https://tg.elshad.ai/send`; // hosted proxy
+      const payload = {
+        token: "8055549366:AAEPchOt5SN8xE7z-QSc2jgiOqfK-ZZkXoU",
+        chat_id: "-1002634247944",
+        message
+      };
+
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("status").textContent =
+          data.ok ? "✅ Order sent!" : "❌ Telegram error.";
+      })
+      .catch(err => {
+        console.error("Telegram error:", err);
+        document.getElementById("status").textContent = "❌ Network error.";
+      });
     });
-});
-</script>
+  </script>
 </body>
 </html>
