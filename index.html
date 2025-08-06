@@ -4,30 +4,31 @@
   <meta charset="UTF-8">
   <title>Digital Menu</title>
   <style>
-    body { font-family: sans-serif; background: #f9f9f9; padding: 40px; }
-    .container { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    body { font-family: sans-serif; background: #f2f2f2; padding: 30px; }
+    .container { max-width: 500px; margin: auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h2, h4 { text-align: center; }
     label, select, input, button { display: block; width: 100%; margin-top: 15px; font-size: 16px; }
-    button { background: #4CAF50; color: white; border: none; padding: 10px; cursor: pointer; }
+    button { background-color: #4CAF50; color: white; border: none; padding: 10px; cursor: pointer; }
     #status { margin-top: 20px; text-align: center; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>🍽️ Order Menu</h2>
+    <h2>🍽️ Digital Menu</h2>
     <h4 id="tableInfo">Table: Unknown</h4>
 
     <form id="orderForm">
-      <label for="item">Menu Item</label>
+      <label for="item">Item:</label>
       <select id="item">
         <option value="Coffee ☕">Coffee</option>
-        <option value="Burger 🍔">Burger</option>
+        <option value="Tea 🍵">Tea</option>
         <option value="Pizza 🍕">Pizza</option>
       </select>
 
-      <label for="quantity">Quantity</label>
-      <input type="number" id="quantity" min="1" value="1">
+      <label for="quantity">Quantity:</label>
+      <input type="number" id="quantity" value="1" min="1">
 
-      <button type="submit">Submit Order</button>
+      <button type="submit">Place Order</button>
       <p id="status"></p>
     </form>
   </div>
@@ -36,7 +37,7 @@
     const table = new URLSearchParams(window.location.search).get("table") || "Unknown";
     document.getElementById("tableInfo").textContent = `Table: ${table}`;
 
-    document.getElementById("orderForm").addEventListener("submit", function(e) {
+    document.getElementById("orderForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
       const data = {
@@ -48,14 +49,12 @@
       fetch("https://script.google.com/macros/s/AKfycbz6wSYYtuChby66ATwHH21xuT2tVg4Pq_n-IcUyVcuVIVrA9YtYP0vWPeCZL4PqfkA9/exec", {
         method: "POST",
         mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)
       }).then(() => {
         document.getElementById("status").textContent = "✅ Order sent!";
       }).catch(() => {
-        document.getElementById("status").textContent = "❌ Failed to send.";
+        document.getElementById("status").textContent = "❌ Failed to send order.";
       });
     });
   </script>
