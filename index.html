@@ -2,173 +2,158 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Digital Menu</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Menu</title>
 <style>
-  body {
-    font-family: sans-serif;
-    margin: 0;
-    background: #f9f9f9;
-  }
-  header {
-    background: #4CAF50;
-    color: white;
-    padding: 15px;
-    text-align: center;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .menu-section {
-    padding: 10px 15px;
-  }
-  .section-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 15px;
-    border-bottom: 2px solid #ddd;
-    padding-bottom: 5px;
-  }
-  .menu-item {
-    display: flex;
-    justify-content: space-between;
-    background: white;
-    padding: 10px;
-    margin-top: 8px;
-    border-radius: 6px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.05);
-    flex-wrap: wrap;
-  }
-  .item-info {
-    flex: 1;
-  }
-  .item-name {
-    font-weight: bold;
-  }
-  .item-desc {
-    font-size: 14px;
-    color: #555;
-  }
-  .item-price {
-    color: #4CAF50;
-    font-weight: bold;
-  }
-  .order-controls {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 5px;
-  }
-  input[type="number"] {
-    width: 60px;
-    padding: 4px;
-  }
-  button {
-    padding: 5px 8px;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  #status {
-    text-align: center;
-    margin: 10px;
-    font-size: 16px;
-  }
+    body {
+        font-family: Arial, sans-serif;
+        background: #fafafa;
+        margin: 0;
+        padding: 0;
+    }
+    header {
+        background: #ff5722;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-size: 1.5rem;
+    }
+    .menu {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        overflow-y: auto;
+    }
+    .menu-item {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+        box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+    }
+    .menu-item h3 {
+        margin: 0;
+        color: #ff5722;
+    }
+    .menu-item p {
+        margin: 5px 0;
+        color: #555;
+    }
+    .menu-item button {
+        background: #ff5722;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .menu-item button:hover {
+        background: #e64a19;
+    }
+    /* Pop-up */
+    #order-popup {
+        display: none;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4caf50;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0px 2px 6px rgba(0,0,0,0.3);
+        animation: fadeInOut 3s ease forwards;
+    }
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateY(-20px); }
+        10% { opacity: 1; transform: translateY(0); }
+        90% { opacity: 1; }
+        100% { opacity: 0; transform: translateY(-20px); }
+    }
 </style>
 </head>
 <body>
 
-<header>
-  <h2>🍽 Digital Menu</h2>
-  <div id="tableInfo">Table: Unknown</div>
-</header>
+<header>📋 Digital Menu</header>
+<div class="menu" id="menu"></div>
 
-<div id="menu"></div>
-
-<p id="status"></p>
-
-<script>
-const table = new URLSearchParams(window.location.search).get("table") || "Unknown";
-document.getElementById("tableInfo").textContent = `Table: ${table}`;
-
-const menuData = [
-  {name:"ጨጨብሳ በእንቁላል",desc:"Cacabsaa Killeen",cat:"ciree/ቁርስ",price:250},
-  {name:"ጨጨብሳ እስፔሻል",desc:"Cacabsaa Iispehsalaa(Kitfoni)",cat:"ciree/ቁርስ",price:300},
-  {name:"ጨጨብሳ ኖርማል",desc:"Cacabsaa",cat:"ciree/ቁርስ",price:150},
-  {name:"ቡላ ፍርፍር እስፔውሻል",desc:"Firfirii Bulaa Iispeshalaa",cat:"ciree/ቁርስ",price:300},
-  {name:"ቡላ ፍርፍር ኖርማል",desc:"Firfirii Bulaa",cat:"ciree/ቁርስ",price:150},
-  {name:"ገንፎ እስፔሻል",desc:"Marqaa Iispeshalaa",cat:"ciree/ቁርስ",price:300},
-  {name:"የቡላ ገንፎ",desc:"Marqaa Bulaa",cat:"ciree/ቁርስ",price:150},
-  {name:"ቡላ ገንፎ እስፔሻል",desc:"Marqaa Bulaa Iispehsalaa",cat:"ciree/ቁርስ",price:300},
-  {name:"ጭኮ",desc:"Micciiraa",cat:"ciree/ቁርስ",price:500},
-  {name:"ቂንጬ",desc:"Qincee",cat:"ciree/ቁርስ",price:150},
-  {name:"ቡላ ፍርፍር በአይብ",desc:"Firfirii Bula Shalalan",cat:"ciree/ቁርስ",price:200},
-  {name:"እርጎ",desc:"Itituu",cat:"gosa dhugaatii/የመጠጥ ዝርዝር",price:80},
-  {name:"ትፈልቶ የቀዘቀዘ ወተት",desc:"Aannan Kabanayee",cat:"gosa dhugaatii/የመጠጥ ዝርዝር",price:40},
-  {name:"ለስላሳ",desc:"Lalaffaa",cat:"gosa dhugaatii/የመጠጥ ዝርዝር",price:40},
-  {name:"ውሃ 2 ሊትር",desc:"Bishaan L2",cat:"gosa dhugaatii/የመጠጥ ዝርዝር",price:35},
-  {name:"ውሃ 1 ሊትር",desc:"Bishaan L1",cat:"gosa dhugaatii/የመጠጥ ዝርዝር",price:25},
-  {name:"ውሃ 1/2 ሊትር",desc:"Bishaan L1/2",cat:"gosa dhugaatii/የመጠጥ ዝርዝር",price:25},
-  {name:"ተልባ ጁስ እስፔሻል",desc:"Juisii Talbaa Ispeshalaa",cat:"gosa dhugaatii/የመጠጥ ዝርዝር",price:100},
-  {name:"ተልባ ጁስ",desc:"Juisii Talbaa Ispeshalaa",cat:"gosa dhugaatii/የመጠጥ ዝርዝር",price:80},
-  {name:"ካሮት ጁስ",desc:"Juisii Kaarotii",cat:"gosa dhugaatii/የመጠጥ ዝርዝር",price:80},
-  {name:"ሀባብ ጁስ",desc:"Juisii Habaabii",cat:"gosa dhugaatii/የመጠጥ ዝርዝር",price:80},
-  {name:"ማኪያቶ",desc:"Macchiato",cat:"dhugaatii ho'aa/ትኩስ መጠጦች",price:40},
-  {name:"ቡና",desc:"Buna",cat:"dhugaatii ho'aa/ትኩስ መጠጦች",price:30},
-  {name:"ሻይ",desc:"Shaayii",cat:"dhugaatii ho'aa/ትኩስ መጠጦች",price:25}
-];
-
-function renderMenu() {
-  const menuDiv = document.getElementById("menu");
-  const categories = [...new Set(menuData.map(item => item.cat))];
-  categories.forEach(cat => {
-    const section = document.createElement("div");
-    section.className = "menu-section";
-    section.innerHTML = `<div class="section-title">${cat}</div>`;
-    menuData.filter(i => i.cat === cat).forEach(item => {
-      const itemDiv = document.createElement("div");
-      itemDiv.className = "menu-item";
-      itemDiv.innerHTML = `
-        <div class="item-info">
-          <div class="item-name">${item.name}</div>
-          <div class="item-desc">${item.desc}</div>
-          <div class="item-price">${item.price} Br</div>
-          <div class="order-controls">
-            <input type="number" value="1" min="1" id="qty-${item.name}">
-            <button onclick="placeOrder('${item.name}','${item.desc}',${item.price})">Order</button>
-          </div>
-        </div>
-      `;
-      section.appendChild(itemDiv);
-    });
-    menuDiv.appendChild(section);
-  });
-}
-
-function placeOrder(name, desc, price) {
-  const qty = document.getElementById(`qty-${name}`).value;
-  const data = {
-    table: table,
-    item: name,
-    quantity: qty
-  };
-
-  fetch("YOUR_WEB_APP_URL_HERE", {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  }).then(() => {
-    document.getElementById("status").textContent = `✅ Order for ${name} sent!`;
-  }).catch(() => {
-    document.getElementById("status").textContent = "❌ Failed to send order.";
-  });
-}
 <div id="order-popup">✅ Order Sent!</div>
 
-renderMenu();
+<script>
+// Menu data
+const menuItems = [
+    { name: "ጨጨብሳ በእንቁላል", description: "Cacabsaa Killeen", category: "ciree/ቁርስ", price: 250 },
+    { name: "ጨጨብሳ እስፔሻል", description: "Cacabsaa Iispehsalaa(Kitfoni)", category: "ciree/ቁርስ", price: 300 },
+    { name: "ጨጨብሳ ኖርማል", description: "Cacabsaa", category: "ciree/ቁርስ", price: 150 },
+    { name: "ቡላ ፍርፍር እስፔውሻል", description: "Firfirii Bulaa Iispeshalaa", category: "ciree/ቁርስ", price: 300 },
+    { name: "ቡላ ፍርፍር ኖርማል", description: "Firfirii Bulaa", category: "ciree/ቁርስ", price: 150 },
+    { name: "ገንፎ እስፔሻል", description: "Marqaa Iispeshalaa", category: "ciree/ቁርስ", price: 300 },
+    { name: "የቡላ ገንፎ", description: "Marqaa Bulaa", category: "ciree/ቁርስ", price: 150 },
+    { name: "ቡላ ገንፎ እስፔሻል", description: "Marqaa Bulaa Iispehsalaa", category: "ciree/ቁርስ", price: 300 },
+    { name: "ጭኮ", description: "Micciiraa", category: "ciree/ቁርስ", price: 500 },
+    { name: "ቂንጬ", description: "Qincee", category: "ciree/ቁርስ", price: 150 },
+    { name: "ቡላ ፍርፍር በአይብ", description: "Firfirii Bula Shalalan", category: "ciree/ቁርስ", price: 200 },
+    { name: "እርጎ", description: "Itituu", category: "gosa dhugaatii/የመጠጥ ዝርዝር", price: 80 },
+    { name: "ትፈልቶ የቀዘቀዘ ወተት", description: "Aannan Kabanayee", category: "gosa dhugaatii/የመጠጥ ዝርዝር", price: 40 },
+    { name: "ለስላሳ", description: "Lalaffaa", category: "gosa dhugaatii/የመጠጥ ዝርዝር", price: 40 },
+    { name: "ውሃ 2 ሊትር", description: "Bishaan L2", category: "gosa dhugaatii/የመጠጥ ዝርዝር", price: 35 },
+    { name: "ውሃ 1 ሊትር", description: "Bishaan L1", category: "gosa dhugaatii/የመጠጥ ዝርዝር", price: 25 },
+    { name: "ውሃ 1/2 ሊትር", description: "Bishaan L1/2", category: "gosa dhugaatii/የመጠጥ ዝርዝር", price: 25 },
+    { name: "ተልባ ጁስ እስፔሻል", description: "Juisii Talbaa Ispeshalaa", category: "gosa dhugaatii/የመጠጥ ዝርዝር", price: 100 },
+    { name: "ተልባ ጁስ", description: "Juisii Talbaa", category: "gosa dhugaatii/የመጠጥ ዝርዝር", price: 80 },
+    { name: "ካሮት ጁስ", description: "Juisii Kaarotii", category: "gosa dhugaatii/የመጠጥ ዝርዝር", price: 80 },
+    { name: "ሀባብ ጁስ", description: "Juisii Habaabii", category: "gosa dhugaatii/የመጠጥ ዝርዝር", price: 80 },
+    { name: "ማኪያቶ", description: "Macchiato", category: "dhugaatii ho'aa/ትኩስ መጠጦች", price: 40 },
+    { name: "ቡና", description: "Buna", category: "dhugaatii ho'aa/ትኩስ መጠጦች", price: 30 },
+    { name: "ሻይ", description: "Shaayii", category: "dhugaatii ho'aa/ትኩስ መጠጦች", price: 25 }
+];
+
+// Get table number from URL
+const urlParams = new URLSearchParams(window.location.search);
+const tableNumber = urlParams.get('table') || "Unknown";
+
+// Display menu
+const menuDiv = document.getElementById("menu");
+menuItems.forEach(item => {
+    const div = document.createElement("div");
+    div.classList.add("menu-item");
+    div.innerHTML = `
+        <h3>${item.name} - ${item.price} Br</h3>
+        <p>${item.description}</p>
+        <p><strong>Category:</strong> ${item.category}</p>
+        <button onclick="sendOrder('${item.name}', ${item.price})">Order</button>
+    `;
+    menuDiv.appendChild(div);
+});
+
+// Send order to Google Sheet
+function sendOrder(itemName, price) {
+    const orderData = {
+        table: tableNumber,
+        item: itemName,
+        price: price
+    };
+
+    fetch("https://script.google.com/macros/s/AKfycbyO2PJch9_-Y7lQKPCR67Ea8Dhy3S7JijaaCou3o4D9MA4g--CP4Byn4TcJekgYiQCv/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            document.getElementById("order-popup").style.display = "block";
+            setTimeout(() => {
+                document.getElementById("order-popup").style.display = "none";
+            }, 3000);
+        } else {
+            alert("Error sending order.");
+        }
+    })
+    .catch(err => {
+        console.error("Error:", err);
+        alert("Network error. Please try again.");
+    });
+}
 </script>
 
 </body>
