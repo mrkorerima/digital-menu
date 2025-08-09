@@ -57,3 +57,16 @@ button:hover {
   margin-top: 10px;
   text-align: center;
 }
+
+#order-popup {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #4caf50;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  display: none;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  font-size: 16px;
+}
