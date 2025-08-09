@@ -3,158 +3,152 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Asgprrii Buna</title>
+  <title>Robera Coffee Shop Menu</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@300;700&display=swap');
+    /* Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Open+Sans:wght@400;600&display=swap');
 
-    /* Reset & base */
+    /* Reset */
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
     }
 
     body {
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      font-family: 'Roboto', sans-serif;
-      color: #e0e7ff;
+      background-color: #1e1a16;
+      color: #d6c3a5;
+      font-family: 'Open Sans', sans-serif;
+      line-height: 1.6;
       min-height: 100vh;
+      padding: 1.5rem;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
-      overflow-x: hidden;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      background: #2e2a23;
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      box-shadow: 0 8px 30px rgba(214, 195, 165, 0.3);
     }
 
     h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 500;
-      font-size: 3.2rem;
-      margin-bottom: 0.5rem;
-      color: #7efcff;
-      text-shadow:
-        0 0 8px #7efcff,
-        0 0 20px #00f0ff;
+      font-family: 'Merriweather', serif;
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 0.3rem;
+      color: #c9a85e;
+      text-align: center;
+      letter-spacing: 1.2px;
     }
 
-    h2 {
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 500;
-      font-size: 1.8rem;
+    h2.category {
+      font-family: 'Merriweather', serif;
+      font-weight: 700;
+      font-size: 1.6rem;
       margin: 2rem 0 1rem;
-      border-bottom: 2px solid #7efcff;
+      border-bottom: 2px solid #c9a85e;
       padding-bottom: 0.3rem;
-      color: #a0f0ff;
-      text-shadow: 0 0 6px #7efcff;
-    }
-
-    .menu-container {
-      width: 100%;
-      max-width: 900px;
-      background: rgba(10, 25, 40, 0.7);
-      border-radius: 20px;
-      box-shadow:
-        0 0 20px #0ff,
-        inset 0 0 30px #00f0ff55;
-      padding: 2rem 3rem;
-      backdrop-filter: blur(12px);
+      color: #d6c3a5;
     }
 
     .menu-item {
-      display: grid;
-      grid-template-columns: 1fr 3fr 1fr;
-      gap: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 0.7rem 0;
-      border-bottom: 1px solid #00f0ff33;
-      transition: background 0.3s ease;
+      border-bottom: 1px solid #4b463e;
+      transition: background-color 0.25s ease;
       cursor: default;
     }
 
     .menu-item:hover {
-      background: #0ff4;
-      box-shadow: 0 0 15px #0ff;
-      border-radius: 10px;
-      transform: scale(1.02);
+      background-color: #3b362f;
+      border-radius: 6px;
+    }
+
+    .menu-item-info {
+      max-width: 70%;
     }
 
     .menu-item-name {
-      font-weight: 700;
-      font-size: 1.2rem;
-      color: #00ffff;
-      text-shadow: 0 0 5px #00f0ff;
-      align-self: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #f5e6a9;
     }
 
     .menu-item-desc {
+      font-size: 0.9rem;
       font-style: italic;
-      font-weight: 300;
-      color: #a0dfffcc;
-      align-self: center;
+      color: #bbaf89;
+      margin-top: 3px;
     }
 
     .menu-item-price {
       font-weight: 700;
-      font-family: 'Orbitron', monospace;
-      font-size: 1.3rem;
-      color: #7efcff;
+      font-family: 'Merriweather', serif;
+      font-size: 1.15rem;
+      color: #c9a85e;
+      min-width: 60px;
       text-align: right;
-      align-self: center;
-      text-shadow:
-        0 0 8px #7efcff;
     }
 
     footer {
-      margin-top: 3rem;
+      margin-top: 2.5rem;
       font-size: 0.85rem;
-      color: #70f0ff88;
       text-align: center;
+      color: #7b6f4c;
       font-style: italic;
     }
 
     /* Responsive */
-    @media (max-width: 600px) {
+    @media (max-width: 480px) {
+      body {
+        padding: 1rem;
+      }
+
+      .container {
+        padding: 1.5rem 1.8rem;
+      }
+
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      h2.category {
+        font-size: 1.3rem;
+      }
+
       .menu-item {
-        grid-template-columns: 1fr 2fr;
-        grid-template-rows: auto auto;
-        gap: 0.3rem;
+        flex-direction: column;
+        align-items: flex-start;
       }
+
+      .menu-item-info {
+        max-width: 100%;
+      }
+
       .menu-item-price {
-        grid-column: 2;
+        margin-top: 6px;
+        min-width: auto;
+        width: 100%;
         text-align: left;
-        font-size: 1.1rem;
-        margin-top: 0.3rem;
+        font-size: 1.05rem;
       }
     }
-
-    /* Animated subtle background */
-    body::before {
-      content: "";
-      position: fixed;
-      top: -20%;
-      left: -20%;
-      width: 140vw;
-      height: 140vh;
-      background:
-        radial-gradient(circle at 30% 30%, #00f0ff55, transparent 50%),
-        radial-gradient(circle at 70% 70%, #7efcff44, transparent 50%);
-      filter: blur(80px);
-      animation: pulse 15s infinite alternate ease-in-out;
-      z-index: -1;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1) translate(0, 0); opacity: 0.7; }
-      100% { transform: scale(1.1) translate(10px, 10px); opacity: 0.9; }
-    }
-
   </style>
 </head>
 <body>
-  <h1>Asgorrii buna</h1>
-  <div class="menu-container" id="menu">
-    <!-- Menu will render here -->
+  <div class="container">
+    <h1>Robera Coffee Shop</h1>
+
+    <div id="menu"></div>
+
+    <footer>Experience luxury in every sip ☕️</footer>
   </div>
-  <footer>Experience the future of coffee. ☕️✨</footer>
 
   <script>
     const menu = [
@@ -186,22 +180,27 @@
 
     const menuDiv = document.getElementById('menu');
 
-    // Group by category
+    // Get unique categories in order
     const categories = [...new Set(menu.map(i => i.category))];
 
-    categories.forEach(cat => {
+    categories.forEach(category => {
       const catTitle = document.createElement('h2');
-      catTitle.textContent = cat;
+      catTitle.className = 'category';
+      catTitle.textContent = category;
       menuDiv.appendChild(catTitle);
 
-      menu.filter(i => i.category === cat).forEach(item => {
+      menu.filter(item => item.category === category).forEach(item => {
         const itemDiv = document.createElement('div');
         itemDiv.className = 'menu-item';
+
         itemDiv.innerHTML = `
-          <div class="menu-item-name">${item.name}</div>
-          <div class="menu-item-desc">${item.description}</div>
+          <div class="menu-item-info">
+            <div class="menu-item-name">${item.name}</div>
+            <div class="menu-item-desc">${item.description}</div>
+          </div>
           <div class="menu-item-price">${item.price} ETB</div>
         `;
+
         menuDiv.appendChild(itemDiv);
       });
     });
