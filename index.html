@@ -1,34 +1,210 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Asgorrii Buna</title>
-<link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Futuristic Coffee Shop Menu</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Roboto:wght@300;700&display=swap');
+
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: 'Roboto', sans-serif;
+      color: #e0e7ff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 500;
+      font-size: 3.2rem;
+      margin-bottom: 0.5rem;
+      color: #7efcff;
+      text-shadow:
+        0 0 8px #7efcff,
+        0 0 20px #00f0ff;
+    }
+
+    h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 500;
+      font-size: 1.8rem;
+      margin: 2rem 0 1rem;
+      border-bottom: 2px solid #7efcff;
+      padding-bottom: 0.3rem;
+      color: #a0f0ff;
+      text-shadow: 0 0 6px #7efcff;
+    }
+
+    .menu-container {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(10, 25, 40, 0.7);
+      border-radius: 20px;
+      box-shadow:
+        0 0 20px #0ff,
+        inset 0 0 30px #00f0ff55;
+      padding: 2rem 3rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .menu-item {
+      display: grid;
+      grid-template-columns: 1fr 3fr 1fr;
+      gap: 1rem;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid #00f0ff33;
+      transition: background 0.3s ease;
+      cursor: default;
+    }
+
+    .menu-item:hover {
+      background: #0ff4;
+      box-shadow: 0 0 15px #0ff;
+      border-radius: 10px;
+      transform: scale(1.02);
+    }
+
+    .menu-item-name {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #00ffff;
+      text-shadow: 0 0 5px #00f0ff;
+      align-self: center;
+    }
+
+    .menu-item-desc {
+      font-style: italic;
+      font-weight: 300;
+      color: #a0dfffcc;
+      align-self: center;
+    }
+
+    .menu-item-price {
+      font-weight: 700;
+      font-family: 'Orbitron', monospace;
+      font-size: 1.3rem;
+      color: #7efcff;
+      text-align: right;
+      align-self: center;
+      text-shadow:
+        0 0 8px #7efcff;
+    }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      color: #70f0ff88;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .menu-item {
+        grid-template-columns: 1fr 2fr;
+        grid-template-rows: auto auto;
+        gap: 0.3rem;
+      }
+      .menu-item-price {
+        grid-column: 2;
+        text-align: left;
+        font-size: 1.1rem;
+        margin-top: 0.3rem;
+      }
+    }
+
+    /* Animated subtle background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: -20%;
+      left: -20%;
+      width: 140vw;
+      height: 140vh;
+      background:
+        radial-gradient(circle at 30% 30%, #00f0ff55, transparent 50%),
+        radial-gradient(circle at 70% 70%, #7efcff44, transparent 50%);
+      filter: blur(80px);
+      animation: pulse 15s infinite alternate ease-in-out;
+      z-index: -1;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1) translate(0, 0); opacity: 0.7; }
+      100% { transform: scale(1.1) translate(10px, 10px); opacity: 0.9; }
+    }
+
+  </style>
 </head>
 <body>
+  <h1>Robera Coffee Shop</h1>
+  <div class="menu-container" id="menu">
+    <!-- Menu will render here -->
+  </div>
+  <footer>Experience the future of coffee. ☕️✨</footer>
 
-<header>
-  <h1>Asgorrii buna</h1>
-</header>
+  <script>
+    const menu = [
+      {"name":"ጨጨብሳ በእንቁላል","description":"Cacabsaa Killeen","category":"ciree/ቁርስ","price":250},
+      {"name":"ጨጨብሳ እስፔሻል","description":"Cacabsaa Iispehsalaa(Kitfoni)","category":"ciree/ቁርስ","price":300},
+      {"name":"ጨጨብሳ ኖርማል","description":"Cacabsaa","category":"ciree/ቁርስ","price":150},
+      {"name":"ቡላ ፍርፍር እስፔውሻል","description":"Firfirii Bulaa Iispeshalaa","category":"ciree/ቁርስ","price":300},
+      {"name":"ቡላ ፍርፍር ኖርማል","description":"Firfirii Bulaa","category":"ciree/ቁርስ","price":150},
+      {"name":"ገንፎ እስፔሻል","description":"Marqaa Iispeshalaa","category":"ciree/ቁርስ","price":300},
+      {"name":"የቡላ ገንፎ","description":"Marqaa Bulaa","category":"ciree/ቁርስ","price":150},
+      {"name":"ቡላ ገንፎ እስፔሻል","description":"Marqaa Bula Iispehsalaa","category":"ciree/ቁርስ","price":300},
+      {"name":"ጭኮ","description":"Micciiraa","category":"ciree/ቁርስ","price":500},
+      {"name":"ቂንጬ","description":"Qincee","category":"ciree/ቁርስ","price":150},
+      {"name":"ቡላ ፍርፍር በአይብ","description":"Firfirii Bula Shalalan","category":"ciree/ቁርስ","price":200},
+      {"name":"እርጎ","description":"Itituu","category":"gosa dhugaatii/የመጠጥ ዝርዝር","price":80},
+      {"name":"ትፈልቶ የቀዘቀዘ ወተት","description":"Aannan Kabanayee","category":"gosa dhugaatii/የመጠጥ ዝርዝር","price":40},
+      {"name":"ለስላሳ","description":"Lalaffaa","category":"gosa dhugaatii/የመጠጥ ዝርዝር","price":40},
+      {"name":"ውሃ 2 ሊትር","description":"Bishaan L2","category":"gosa dhugaatii/የመጠጥ ዝርዝር","price":35},
+      {"name":"ውሃ 1 ሊትር","description":"Bishaan L1","category":"gosa dhugaatii/የመጠጥ ዝርዝር","price":25},
+      {"name":"ውሃ 1/2 ሊትር","description":"Bishaan L1/2","category":"gosa dhugaatii/የመጠጥ ዝርዝር","price":25},
+      {"name":"ተልባ ጁስ እስፔሻል","description":"Juisii Talbaa Ispeshalaa","category":"gosa dhugaatii/የመጠጥ ዝርዝር","price":100},
+      {"name":"ተልባ ጁስ","description":"Juisii Talbaa Ispeshalaa","category":"gosa dhugaatii/የመጠጥ ዝርዝር","price":80},
+      {"name":"ካሮት ጁስ","description":"Juisii Kaarotii","category":"gosa dhugaatii/የመጠጥ ዝርዝር","price":80},
+      {"name":"ሀባብ ጁስ","description":"Juisii Habaabii","category":"gosa dhugaatii/የመጠጥ ዝርዝር","price":80},
+      {"name":"ማኪያቶ","description":"Macchiato","category":"dhugaatii ho'aa/ትኩስ መጠጦች","price":40},
+      {"name":"ቡና","description":"Buna","category":"dhugaatii ho'aa/ትኩስ መጠጦች","price":30},
+      {"name":"ሻይ","description":"Shaayii","category":"dhugaatii ho'aa/ትኩስ መጠጦች","price":25}
+    ];
 
-<main id="menu"></main>
+    const menuDiv = document.getElementById('menu');
 
-<!-- Cart side panel -->
-<aside id="cartPanel" aria-hidden="true" role="region" aria-label="Shopping Cart">
-  <h2>Your Cart</h2>
-  <button id="closeCartBtn" aria-label="Close Cart">&times;</button>
-  <div id="cartItems"></div>
-  <div id="cartTotal"></div>
-  <button id="submitOrderBtn" disabled>Submit Order</button>
-</aside>
+    // Group by category
+    const categories = [...new Set(menu.map(i => i.category))];
 
-<!-- Cart open button -->
-<button id="openCartBtn" aria-label="Open Cart">🛒 Cart (<span id="cartCount">0</span>)</button>
+    categories.forEach(cat => {
+      const catTitle = document.createElement('h2');
+      catTitle.textContent = cat;
+      menuDiv.appendChild(catTitle);
 
-<!-- Popup confirmation -->
-<div id="popup" role="alert" aria-live="assertive">✅ Order Sent!</div>
-
-<script src="script.js"></script>
+      menu.filter(i => i.category === cat).forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'menu-item';
+        itemDiv.innerHTML = `
+          <div class="menu-item-name">${item.name}</div>
+          <div class="menu-item-desc">${item.description}</div>
+          <div class="menu-item-price">${item.price} ETB</div>
+        `;
+        menuDiv.appendChild(itemDiv);
+      });
+    });
+  </script>
 </body>
 </html>
