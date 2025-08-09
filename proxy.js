@@ -1,18 +1,26 @@
-// proxy.js (Cloudflare Worker or Vercel function)
-addEventListener('fetch', event => {
-  event.respondWith(handle(event.request));
-});
-async function handle(request) {
-  const { token, chat_id, message } = await request.json();
-  const resp = await fetch(
-    `https://api.telegram.org/bot${token}/sendMessage`,
-    {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id, text: message, parse_mode: "Markdown" })
+let orderData = {
+    table: selectedTableNumber,
+    item: selectedItemName,
+    description: selectedItemDescription,
+    price: selectedItemPrice
+};
+
+fetch("https://script.google.com/macros/s/AKfycbyO2PJch9_-Y7lQKPCR67Ea8Dhy3S7JijaaCou3o4D9MA4g--CP4Byn4TcJekgYiQCv/exec", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(orderData)
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === "success") {
+        document.getElementById("order-popup").style.display = "block";
+        setTimeout(() => {
+            document.getElementById("order-popup").style.display = "none";
+        }, 3000);
     }
-  );
-  const data = await resp.json();
-  return new Response(JSON.stringify(data), {
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-  });
-}
+})
+.catch(error => {
+    console.error("Error sending order:", error);
+});
