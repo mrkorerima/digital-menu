@@ -1,10 +1,7 @@
-// ========== CONFIG ==========
-// Put your Google Apps Script URL here:
+// === CONFIG ===
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTeI_JYIWd8ah5tUU9eYoTq5K84foWnpZDjvwRX6tFJpoIlJt5U_LMK3YTmEuqKi7k/exec";
 
-// ===========================
-
-// Grab DOM elements
+// === DOM ELEMENTS ===
 const menuEl = document.getElementById("menu");
 const cartPanel = document.getElementById("cartPanel");
 const openCartBtn = document.getElementById("openCartBtn");
@@ -15,21 +12,19 @@ const submitOrderBtn = document.getElementById("submitOrderBtn");
 const cartCountEl = document.getElementById("cartCount");
 const popup = document.getElementById("popup");
 
-// Cart data structure: [{id, name, price, quantity}]
+// === CART DATA ===
 let cart = [];
 
-// Parse table number from URL query string
+// === Get table number from URL param "table" ===
 function getTableNumber() {
   const params = new URLSearchParams(window.location.search);
   const table = params.get("table");
-  if (!table || isNaN(table) || table < 1) {
-    return "Unknown";
-  }
+  if (!table || isNaN(table) || table < 1) return "Unknown";
   return table;
 }
 const tableNumber = getTableNumber();
 
-// Full menu data (Amharic + Oromifa + category + price)
+// === Menu data (your full menu) ===
 const menuData = [
   { id: 1, name: "ጨጨብሳ በእንቁላል", description: "Cacabsaa Killeen", category: "ciree/ቁርስ", price: 250 },
   { id: 2, name: "ጨጨብሳ እስፔሻል", description: "Cacabsaa Iispehsalaa(Kitfoni)", category: "ciree/ቁርስ", price: 300 },
@@ -57,7 +52,7 @@ const menuData = [
   { id: 24, name: "ሻይ", description: "Shaayii", category: "dhugaatii ho'aa/ትኩስ መጠጦች", price: 25 }
 ];
 
-// Group items by category for display
+// === Group menu by category ===
 function groupByCategory(items) {
   return items.reduce((acc, item) => {
     if (!acc[item.category]) acc[item.category] = [];
@@ -66,23 +61,22 @@ function groupByCategory(items) {
   }, {});
 }
 
-// Render the menu with quantity inputs and add buttons
+// === Render menu ===
 function renderMenu() {
   const grouped = groupByCategory(menuData);
   menuEl.innerHTML = "";
 
   for (const [category, items] of Object.entries(grouped)) {
-    const catDiv = document.createElement("section");
-    catDiv.className = "category";
+    const catSection = document.createElement("section");
+    catSection.className = "category";
 
     const catTitle = document.createElement("h2");
     catTitle.textContent = category;
-    catDiv.appendChild(catTitle);
+    catSection.appendChild(catTitle);
 
     items.forEach((item) => {
       const itemDiv = document.createElement("div");
       itemDiv.className = "item";
-
       itemDiv.innerHTML = `
         <div class="item-info">
           <div class="item-name">${item.name}</div>
@@ -90,69 +84,68 @@ function renderMenu() {
         </div>
         <div>
           <span class="item-price">${item.price} ETB</span>
-          <input type="number" min="1" value="1" class="qty-select" id="qty-${item.id}" />
+          <input type="number" min="1" value="1" id="qty-${item.id}" class="qty-select" />
           <button class="add-btn" data-id="${item.id}">Add</button>
         </div>
       `;
-
-      catDiv.appendChild(itemDiv);
+      catSection.appendChild(itemDiv);
     });
 
-    menuEl.appendChild(catDiv);
+    menuEl.appendChild(catSection);
   }
 }
 
-// Add item to cart or update quantity if already in cart
+// === Add to cart ===
 function addToCart(id, qty) {
-  const existing = cart.find((c) => c.id === id);
+  const item = menuData.find(i => i.id === id);
+  if (!item) return;
+
+  const existing = cart.find(c => c.id === id);
   if (existing) {
     existing.quantity += qty;
   } else {
-    const item = menuData.find((m) => m.id === id);
     cart.push({ id: item.id, name: item.name, price: item.price, quantity: qty });
   }
   renderCart();
 }
 
-// Render the cart items inside the side panel
+// === Render cart ===
 function renderCart() {
   cartItemsEl.innerHTML = "";
   if (cart.length === 0) {
     cartItemsEl.textContent = "Your cart is empty.";
     submitOrderBtn.disabled = true;
-    cartCountEl.textContent = 0;
+    cartCountEl.textContent = "0";
     cartTotalEl.textContent = "";
     return;
   }
 
-  cart.forEach((item) => {
-    const itemEl = document.createElement("div");
-    itemEl.className = "cart-item";
-
-    itemEl.innerHTML = `
+  cart.forEach(item => {
+    const cartItemDiv = document.createElement("div");
+    cartItemDiv.className = "cart-item";
+    cartItemDiv.innerHTML = `
       <div class="cart-item-name">${item.name}</div>
       <input type="number" min="1" value="${item.quantity}" data-id="${item.id}" class="cart-item-qty" />
       <div class="cart-item-price">${item.price * item.quantity} ETB</div>
-      <button class="cart-item-remove" aria-label="Remove ${item.name}" data-id="${item.id}">&times;</button>
+      <button class="cart-item-remove" data-id="${item.id}" aria-label="Remove ${item.name}">&times;</button>
     `;
-
-    cartItemsEl.appendChild(itemEl);
+    cartItemsEl.appendChild(cartItemDiv);
   });
 
-  // Calculate total
   const total = cart.reduce((acc, i) => acc + i.price * i.quantity, 0);
   cartTotalEl.textContent = `Total: ${total} ETB`;
   cartCountEl.textContent = cart.reduce((acc, i) => acc + i.quantity, 0);
   submitOrderBtn.disabled = false;
 
-  // Add event listeners for qty changes & removal
-  document.querySelectorAll(".cart-item-qty").forEach((input) => {
-    input.addEventListener("change", (e) => {
-      const id = parseInt(e.target.dataset.id);
+  // Qty change handlers
+  document.querySelectorAll(".cart-item-qty").forEach(input => {
+    input.addEventListener("change", e => {
       let val = parseInt(e.target.value);
       if (isNaN(val) || val < 1) val = 1;
       e.target.value = val;
-      const cartItem = cart.find((c) => c.id === id);
+
+      const id = parseInt(e.target.dataset.id);
+      const cartItem = cart.find(c => c.id === id);
       if (cartItem) {
         cartItem.quantity = val;
         renderCart();
@@ -160,48 +153,50 @@ function renderCart() {
     });
   });
 
-  document.querySelectorAll(".cart-item-remove").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
+  // Remove item handlers
+  document.querySelectorAll(".cart-item-remove").forEach(btn => {
+    btn.addEventListener("click", e => {
       const id = parseInt(e.target.dataset.id);
-      cart = cart.filter((c) => c.id !== id);
+      cart = cart.filter(c => c.id !== id);
       renderCart();
     });
   });
 }
 
-// Event: Add buttons in menu
-menuEl.addEventListener("click", (e) => {
+// === Event listeners ===
+
+// Add to cart from menu
+menuEl.addEventListener("click", e => {
   if (e.target.classList.contains("add-btn")) {
     const id = parseInt(e.target.dataset.id);
     const qtyInput = document.getElementById(`qty-${id}`);
     let qty = parseInt(qtyInput.value);
     if (isNaN(qty) || qty < 1) qty = 1;
     addToCart(id, qty);
-    qtyInput.value = "1"; // reset qty input
+    qtyInput.value = "1";
   }
 });
 
-// Toggle cart panel open/close
+// Open/close cart panel
 openCartBtn.addEventListener("click", () => {
   cartPanel.classList.add("open");
   cartPanel.setAttribute("aria-hidden", "false");
 });
-
 closeCartBtn.addEventListener("click", () => {
   cartPanel.classList.remove("open");
   cartPanel.setAttribute("aria-hidden", "true");
 });
 
-// Submit order event
+// Submit order
 submitOrderBtn.addEventListener("click", () => {
   if (cart.length === 0) return;
+
   submitOrderBtn.disabled = true;
   submitOrderBtn.textContent = "Sending...";
 
-  // Prepare payload
   const payload = {
     table: tableNumber,
-    order: cart.map((item) => ({
+    order: cart.map(item => ({
       name: item.name,
       price: item.price,
       quantity: item.quantity,
@@ -214,38 +209,35 @@ submitOrderBtn.addEventListener("click", () => {
   fetch(GOOGLE_SCRIPT_URL, {
     method: "POST",
     body: JSON.stringify(payload),
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json" }
   })
-    .then((res) => {
-      if (!res.ok) throw new Error("Network response not ok");
-      return res.text();
-    })
-    .then(() => {
-      // Clear cart and close panel
-      cart = [];
-      renderCart();
-      cartPanel.classList.remove("open");
-      cartPanel.setAttribute("aria-hidden", "true");
-      submitOrderBtn.textContent = "Submit Order";
-      showPopup("✅ Order Sent!");
-    })
-    .catch((err) => {
-      submitOrderBtn.disabled = false;
-      submitOrderBtn.textContent = "Submit Order";
-      alert("Error sending order. Please try again.");
-      console.error("Order submission error:", err);
-    });
+  .then(res => {
+    if (!res.ok) throw new Error("Network response not ok");
+    return res.text();
+  })
+  .then(() => {
+    cart = [];
+    renderCart();
+    cartPanel.classList.remove("open");
+    cartPanel.setAttribute("aria-hidden", "true");
+    submitOrderBtn.textContent = "Submit Order";
+    showPopup("✅ Order Sent!");
+  })
+  .catch(err => {
+    submitOrderBtn.disabled = false;
+    submitOrderBtn.textContent = "Submit Order";
+    alert("Error sending order. Please try again.");
+    console.error("Order submission error:", err);
+  });
 });
 
 // Show popup message
 function showPopup(message) {
   popup.textContent = message;
   popup.classList.add("show");
-  setTimeout(() => {
-    popup.classList.remove("show");
-  }, 3000);
+  setTimeout(() => popup.classList.remove("show"), 3000);
 }
 
-// Initial rendering
+// Initial render
 renderMenu();
 renderCart();
