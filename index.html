@@ -1,30 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Digital Menu with Cart</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Digital Menu with Auto Table & Cart</title>
+<style>
+  /* Basic resets and fonts */
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; background: #f5fbe6; color: #355e1a; overflow-x: hidden;
+  }
+  header {
+    background: #a3d977; color: white; padding: 1rem; text-align: center;
+    position: sticky; top: 0; z-index: 1000;
+  }
+  main {
+    max-width: 700px; margin: 1rem auto; padding: 0 1rem;
+  }
+  .category {
+    background: #fffbe6; border-radius: 10px; padding: 1rem;
+    box-shadow: 0 0 8px rgba(163, 217, 119, 0.3); margin-bottom: 1rem;
+  }
+  .category h2 {
+    color: #88b04b; margin-top: 0;
+  }
+  .item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.3rem 0; border-bottom: 1px solid #dbeab3;
+  }
+  .item:last-child {
+    border-bottom: none;
+  }
+  .item-info {
+    max-width: 60%;
+  }
+  .item-name {
+    font-weight: bold;
+  }
+  .item-desc {
+    font-size: 0.85rem; color: #6a7f36;
+  }
+  .item-price {
+    margin-left: 0.5rem; font-weight: bold; color: #556b2f;
+  }
+  .qty-select {
+    width: 50px;
+    margin-left: 10px;
+    font-size: 1rem;
+  }
+  .add-btn {
+    background: #f8e473; border: none; padding: 0.3rem 0.6rem;
+    border-radius: 6px; cursor: pointer; font-weight: bold; color: #355e1a;
+    transition: background 0.3s ease;
+    margin-left: 10px;
+  }
+  .add-btn:hover {
+    background: #d9d651;
+  }
+  /* Cart side panel */
+  #cartPanel {
+    position: fixed; top: 0; right: -100%; width: 320px; max-width: 90vw;
+    height: 100vh; background: #f0f9d8; box-shadow: -4px 0 12px rgba(163, 217, 119, 0.8);
+    padding: 1rem; display: flex; flex-direction: column; transition: right 0.3s ease;
+    z-index: 1200;
+  }
+  #cartPanel.open {
+    right: 0;
+  }
+  #closeCartBtn {
+    align-self: flex-end; background: none; border: none;
+    font-size: 2rem; color: #355e1a; cursor: pointer; margin-bottom: 0.5rem;
+    line-height: 1;
+  }
+  #cartItems {
+    flex-grow: 1; overflow-y: auto; margin-bottom: 1rem;
+  }
+  .cart-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.4rem 0; border-bottom: 1px solid #dbeab3;
+  }
+  .cart-item:last-child {
+    border-bottom: none;
+  }
+  .cart-item-name {
+    max-width: 50%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cart-item-qty {
+    margin: 0 0.5rem;
+    min-width: 20px;
+    text-align: center;
+  }
+  .cart-item-price {
+    font-weight: bold; color: #556b2f;
+    min-width: 60px;
+    text-align: right;
+  }
+  .cart-item-remove {
+    background: none; border: none;
+    color: #a84727; font-weight: bold;
+    cursor: pointer; margin-left: 0.5rem;
+    font-size: 1.1rem;
+  }
+  #cartTotal {
+    font-weight: bold; font-size: 1.2rem;
+    text-align: right; color: #355e1a;
+    margin-bottom: 0.5rem;
+  }
+  #submitOrderBtn {
+    background: #a3d977; color: white; border: none;
+    padding: 0.7rem 0; font-weight: bold;
+    border-radius: 8px; cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  #submitOrderBtn:disabled {
+    background: #c2db9e; cursor: not-allowed;
+  }
+  /* Cart open button */
+  #openCartBtn {
+    position: fixed; bottom: 20px; right: 20px;
+    background: #a3d977; border: none;
+    padding: 0.7rem 1.2rem; border-radius: 30px;
+    color: white; font-size: 1.1rem;
+    font-weight: bold; cursor: pointer;
+    box-shadow: 0 4px 8px rgba(163, 217, 119, 0.6);
+    z-index: 1100;
+  }
+  /* Popup confirmation */
+  #popup {
+    display: none;
+    position: fixed; top: 20px; right: 20px;
+    background: #88b04b; color: white;
+    padding: 1rem 1.5rem; border-radius: 6px;
+    font-weight: bold;
+    box-shadow: 0 0 15px #7aa52d;
+    z-index: 1500;
+    animation: fadeInOut 3s ease forwards;
+  }
+  #popup.show {
+    display: block;
+  }
+  @keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-20px);}
+    10%, 90% { opacity: 1; transform: translateY(0);}
+    100% { opacity: 0; transform: translateY(-20px);}
+  }
+  /* Responsive */
+  @media (max-width: 600px) {
+    main {
+      max-width: 100%;
+      padding: 0.5rem;
+    }
+    #cartPanel {
+      width: 100vw;
+    }
+  }
+</style>
 </head>
 <body>
 
 <header>
   <h1>Soft Green & Yellow Menu</h1>
-  <select id="tableSelect" aria-label="Select Table Number">
-    <option value="">Select Table</option>
-    <!-- Tables 1 to 12 -->
-    <script>
-      for(let i=1; i<=12; i++) {
-        document.write(`<option value="${i}">Table ${i}</option>`);
-      }
-    </script>
-  </select>
 </header>
 
 <main id="menu"></main>
 
 <!-- Cart side panel -->
-<aside id="cartPanel" class="cart-panel" aria-hidden="true" role="region" aria-label="Shopping Cart">
+<aside id="cartPanel" aria-hidden="true" role="region" aria-label="Shopping Cart">
   <h2>Your Cart</h2>
   <button id="closeCartBtn" aria-label="Close Cart">&times;</button>
   <div id="cartItems"></div>
@@ -33,10 +178,10 @@
 </aside>
 
 <!-- Cart open button -->
-<button id="openCartBtn" aria-label="Open Cart" class="cart-open-btn">🛒 Cart (<span id="cartCount">0</span>)</button>
+<button id="openCartBtn" aria-label="Open Cart">🛒 Cart (<span id="cartCount">0</span>)</button>
 
-<!-- Order confirmation popup -->
-<div id="popup" class="popup" role="alert" aria-live="assertive">✅ Order Sent!</div>
+<!-- Popup confirmation -->
+<div id="popup" role="alert" aria-live="assertive">✅ Order Sent!</div>
 
 <script src="script.js"></script>
 </body>
