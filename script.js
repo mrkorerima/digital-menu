@@ -57,7 +57,7 @@ function sendOrder(item, price) {
     return;
   }
 
-  fetch("YOUR-APPSCRIPT-URL", { // Replace with your Google Apps Script URL
+  fetch("https://script.google.com/macros/s/AKfycbyTeI_JYIWd8ah5tUU9eYoTq5K84foWnpZDjvwRX6tFJpoIlJt5U_LMK3YTmEuqKi7k/exec", { // Replace with your Google Apps Script URL
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ table, item, price })
